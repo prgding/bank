@@ -1,7 +1,6 @@
 package service.Impl;
 
 import dao.ActDao;
-import dao.impl.ActDaoImpl;
 import exceptions.MoneyNotEnough;
 import exceptions.UnknownException;
 import org.apache.ibatis.session.SqlSession;
@@ -10,8 +9,7 @@ import service.AccountService;
 import utils.SqlSessionUtil;
 
 public class AccountServiceImpl implements AccountService {
-
-	private ActDao actDao = new ActDaoImpl();
+	private ActDao actDao = SqlSessionUtil.open().getMapper(ActDao.class);
 
 	@Override
 	public void transfer(String from, String to, double money) throws MoneyNotEnough, UnknownException {
