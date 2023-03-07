@@ -1,6 +1,6 @@
 package service.Impl;
 
-import dao.ActDao;
+import mapper.UserMapper;
 import exceptions.MoneyNotEnough;
 import exceptions.UnknownException;
 import org.apache.ibatis.session.SqlSession;
@@ -9,7 +9,7 @@ import service.AccountService;
 import utils.SqlSessionUtil;
 
 public class AccountServiceImpl implements AccountService {
-	private ActDao actDao = SqlSessionUtil.open().getMapper(ActDao.class);
+	private UserMapper userMapper = SqlSessionUtil.open().getMapper(UserMapper.class);
 
 	@Override
 	public void transfer(String from, String to, double money) throws MoneyNotEnough, UnknownException {
@@ -18,8 +18,8 @@ public class AccountServiceImpl implements AccountService {
 		SqlSession sqlSession = SqlSessionUtil.open();
 
 		// 余额是否充足
-		User fromUser = actDao.select(from);
-		User toUser = actDao.select(to);
+		User fromUser = userMapper.select(from);
+		User toUser = userMapper.select(to);
 
 
 		// 不足
@@ -31,9 +31,12 @@ public class AccountServiceImpl implements AccountService {
 		toUser.setBalance(toUser.getBalance() + money);
 
 		// 更新数据库
-		int count = actDao.update(fromUser);
+		int count = userMapper.update(fromUser);
 
-		count += actDao.update(toUser);
+		String s = null;
+		s.toString();
+
+		count += userMapper.update(toUser);
 
 		if (count!=2) {
 			System.out.println("count =="+count);

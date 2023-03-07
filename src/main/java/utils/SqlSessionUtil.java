@@ -17,18 +17,22 @@ public class SqlSessionUtil {
 		}
 	}
 
-	static ThreadLocal<SqlSession> local = new ThreadLocal<>();
+	private static ThreadLocal<SqlSession> local = new ThreadLocal<>();
 
 	public static SqlSession open(){
+		System.out.println("open方法");
 		SqlSession sqlSession = local.get();
 		if (sqlSession == null) {
+			System.out.println("sqlSession为空，新建一个");
 			sqlSession = factory.openSession();
 			local.set(sqlSession);
 		}
 		return sqlSession;
 	}
 	public static void close(SqlSession sqlSession){
+		System.out.println("close方法");
 		if (sqlSession != null) {
+			System.out.println("close不为空，关闭");
 			sqlSession.close();
 			local.remove();
 		}

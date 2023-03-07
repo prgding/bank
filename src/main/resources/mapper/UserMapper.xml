@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="dao.ActDao">
+<mapper namespace="mapper.UserMapper">
 
     <update id="update">
         update t_act
@@ -11,7 +11,7 @@
         where actno = #{username};
     </update>
 
-    <select id="select" resultType="pojo.User">
+    <select id="select" resultType="User">
         select *
         from t_act
         where actno = #{username};
