@@ -1,8 +1,6 @@
 package web;
 
 import exceptions.MoneyNotEnough;
-import exceptions.UnknownException;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +16,7 @@ public class AccountServlet extends HttpServlet {
 	private AccountService accountService = new AccountServiceImpl();
 
 	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException,
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws
 			IOException {
 		String from = request.getParameter("from");
 		String to = request.getParameter("to");
@@ -29,9 +27,8 @@ public class AccountServlet extends HttpServlet {
 			response.sendRedirect("success.html");
 		} catch (MoneyNotEnough e) {
 			response.sendRedirect("error1.html");
-		} catch (UnknownException e) {
+		} catch (Exception e) {
 			response.sendRedirect("error2.html");
-
 		}
 	}
 }
