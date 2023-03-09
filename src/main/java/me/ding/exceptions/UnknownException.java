@@ -1,4 +1,4 @@
-package exceptions;
+package me.ding.exceptions;
 
 public class UnknownException extends Exception {
 	public UnknownException() {

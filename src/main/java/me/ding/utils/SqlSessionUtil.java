@@ -1,4 +1,4 @@
-package utils;
+package me.ding.utils;
 
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;

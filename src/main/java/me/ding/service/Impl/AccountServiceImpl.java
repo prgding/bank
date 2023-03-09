@@ -1,25 +1,26 @@
-package service.Impl;
+package me.ding.service.Impl;
 
-import exceptions.MoneyNotEnough;
-import exceptions.UnknownException;
-import mapper.UserMapper;
-import pojo.User;
-import service.AccountService;
-import utils.SqlSessionUtil;
+import me.ding.exceptions.MoneyNotEnough;
+import me.ding.exceptions.UnknownException;
+import me.ding.mapper.UserMapper;
+import me.ding.pojo.User;
+import me.ding.service.AccountService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
+@Service("accountService")
 public class AccountServiceImpl implements AccountService {
-	private UserMapper userMapper = SqlSessionUtil.open().getMapper(UserMapper.class);
+
+	@Autowired
+	private UserMapper userMapper;
 
 	@Override
 	public void transfer(String from, String to, double money) throws MoneyNotEnough, UnknownException {
-
-		// 事务控制
-//		SqlSession sqlSession = SqlSessionUtil.open();
-
 		// 余额是否充足
 		User fromUser = userMapper.select(from);
 		User toUser = userMapper.select(to);
-
 
 		// 不足
 		if (fromUser.getBalance() - money < 0) {
@@ -31,18 +32,13 @@ public class AccountServiceImpl implements AccountService {
 
 		// 更新数据库
 		int count = userMapper.update(fromUser);
-
 		String s = null;
 		s.toString();
 		count += userMapper.update(toUser);
 
 		if (count!=2) {
-			System.out.println("count =="+count);
+			System.out.println("count ==" + count);
 			throw new UnknownException("未知原因失败");
 		}
-
-//		sqlSession.commit();
-
-//		SqlSessionUtil.close(sqlSession);
 	}
 }

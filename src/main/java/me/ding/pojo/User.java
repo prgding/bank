@@ -1,4 +1,4 @@
-package pojo;
+package me.ding.pojo;
 
 public class User {
 	private long id;

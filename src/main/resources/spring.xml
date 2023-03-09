@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd   http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+
+    <!--    组件扫描-->
+    <context:component-scan base-package="me.ding"/>
+
+
+    <!--    引入外部属性配置文件-->
+    <context:property-placeholder location="jdbc.properties"/>
+
+    <!--    数据源-->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="driverClassName" value="${driver}"/>
+        <property name="url" value="${url}"/>
+        <property name="username" value="${username}"/>
+        <property name="password" value="${password}"/>
+    </bean>
+
+
+    <bean class="org.mybatis.spring.SqlSessionFactoryBean">
+<!--        注入数据源-->
+        <property name="dataSource" ref="dataSource"/>
+<!--        指定 mybatis 核心配置文件-->
+        <property name="configLocation" value="mybatis-config.xml"/>
+<!--        制定别名-->
+        <property name="typeAliasesPackage" value="me.ding.pojo"/>
+    </bean>
+
+<!--    Mapper 扫描配置器，主要扫描 Mapper 接口，生成代理类-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="me.ding.mapper"/>
+    </bean>
+
+<!--    事务管理器-->
+    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+<!--    启用事务注解-->
+    <tx:annotation-driven transaction-manager="txManager"/>
+
+</beans>

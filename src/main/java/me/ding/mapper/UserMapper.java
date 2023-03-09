@@ -1,6 +1,6 @@
-package mapper;
+package me.ding.mapper;
 
-import pojo.User;
+import me.ding.pojo.User;
 
 public interface UserMapper {
 	int update(User user);
