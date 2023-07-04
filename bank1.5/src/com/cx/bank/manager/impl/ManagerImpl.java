@@ -1,5 +1,7 @@
 package com.cx.bank.manager.impl;
 
+import com.cx.bank.dao.BankDaoInterface;
+import com.cx.bank.dao.impl.BankDaoImpl;
 import com.cx.bank.manager.ManagerInterface;
 import com.cx.bank.model.MoneyBean;
 import com.cx.bank.model.UserBean;
@@ -28,6 +30,7 @@ public class ManagerImpl implements ManagerInterface {
     private static ManagerImpl instance;
     private MoneyBean moneyBean;
     private UserBean userBean;
+    private BankDaoInterface bankDaoInterface = new BankDaoImpl();
 
     public ManagerImpl() {
 
