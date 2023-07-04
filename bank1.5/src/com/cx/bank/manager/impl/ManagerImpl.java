@@ -78,16 +78,7 @@ public class ManagerImpl implements ManagerInterface {
 
     @Override
     public void exitSystem() throws IOException {
-        if (moneyBean != null && userBean != null) {
-            Properties props = new Properties();
-            props.setProperty("username", userBean.getUsername());
-            props.setProperty("password", userBean.getPassword());
-            props.setProperty("money", moneyBean.getBalance().toString());
-            String msg = userBean.getUsername() + " 的用户信息";
-            props.store(new FileOutputStream("./userInfo/" + userBean.getUsername() + ".properties"), msg);
-        }
-        System.out.println("系统已退出");
-        System.exit(0);
+        bankDaoInterface.saveMoney(moneyBean, userBean);
     }
 
     @Override
@@ -96,21 +87,13 @@ public class ManagerImpl implements ManagerInterface {
         System.out.println("请输入用户名:");
         String username = scanner.next();
         new File("./userInfo").mkdirs();
-        File userInfo = new File("./userInfo/" + username + ".properties");
-        if (!userInfo.exists()) {
+        boolean status = bankDaoInterface.findByName(username);
+        if (status) {
+            System.out.println("该用户名已存在\n");
+        } else {
             System.out.println("请输入密码:");
             String password = MD5Utils.hash(scanner.next());
-
-            Properties props = new Properties();
-            props.setProperty("username", username);
-            props.setProperty("password", password);
-            props.setProperty("money", BigDecimal.valueOf(10).toString());
-
-            String msg = username + " 的用户信息";
-            props.store(new FileOutputStream("./userInfo/" + username + ".properties"), msg);
-            System.out.println("注册成功\n");
-        } else {
-            System.out.println("该用户名已存在\n");
+            bankDaoInterface.insertUser(username, password);
         }
     }
 
@@ -121,15 +104,12 @@ public class ManagerImpl implements ManagerInterface {
         String username = scanner.next();
         System.out.println("请输入密码:");
         String password = MD5Utils.hash(scanner.next());
-
-        Properties props = new Properties();
-        props.load(new FileInputStream("./userInfo/" + username + ".properties"));
-        String fileName = props.getProperty("username");
-        String filePwd = props.getProperty("password");
-        BigDecimal fileMoney = new BigDecimal(props.getProperty("money"));
-
-        if (fileName.equals(username) && filePwd.equals(password)) {
+        boolean status = bankDaoInterface.findUser(username, password);
+        if (status) {
             System.out.println("登录成功\n");
+            Properties props = new Properties();
+            props.load(new FileInputStream("./userInfo/" + username + ".properties"));
+            BigDecimal fileMoney = new BigDecimal(props.getProperty("money"));
             ManagerInterface instance = ManagerImpl.getInstance();
             instance.setMoneyBean(new MoneyBean(fileMoney));
             instance.setUserBean(new UserBean(username, password));
