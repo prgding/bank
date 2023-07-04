@@ -1,7 +1,7 @@
 package com.cx.bank.manager.impl;
 
-import com.cx.bank.dao.BankDaoInterface;
-import com.cx.bank.dao.impl.BankDaoImpl;
+import com.cx.bank.dao.FileDaoInterface;
+import com.cx.bank.factory.UserDaoFactory;
 import com.cx.bank.manager.ManagerInterface;
 import com.cx.bank.model.MoneyBean;
 import com.cx.bank.model.UserBean;
@@ -21,7 +21,7 @@ import java.util.Scanner;
  * 实现ManagerInterface接口
  *
  * @author dingshuai
- * @version 1.5
+ * @version 1.6
  */
 
 public class ManagerImpl implements ManagerInterface {
@@ -29,10 +29,10 @@ public class ManagerImpl implements ManagerInterface {
     private static ManagerImpl instance;
     private MoneyBean moneyBean;
     private UserBean userBean;
-    private BankDaoInterface bankDaoInterface = new BankDaoImpl();
+    private FileDaoInterface dao;
 
     public ManagerImpl() {
-
+        this.dao = UserDaoFactory.getInstance().getDao();
     }
 
     public ManagerImpl(MoneyBean moneyBean, UserBean userBean) {
@@ -77,7 +77,8 @@ public class ManagerImpl implements ManagerInterface {
 
     @Override
     public void exitSystem() throws IOException {
-        bankDaoInterface.saveMoney(moneyBean, userBean);
+        dao.saveMoney(moneyBean, userBean);
+
     }
 
     @Override
@@ -86,13 +87,13 @@ public class ManagerImpl implements ManagerInterface {
         System.out.println("请输入用户名:");
         String username = scanner.next();
         new File("./userInfo").mkdirs();
-        boolean status = bankDaoInterface.findByName(username);
+        boolean status = dao.findByName(username);
         if (status) {
             System.out.println("该用户名已存在\n");
         } else {
             System.out.println("请输入密码:");
             String password = MD5Utils.hash(scanner.next());
-            bankDaoInterface.insertUser(username, password);
+            dao.insertUser(username, password);
         }
     }
 
@@ -103,7 +104,7 @@ public class ManagerImpl implements ManagerInterface {
         String username = scanner.next();
         System.out.println("请输入密码:");
         String password = MD5Utils.hash(scanner.next());
-        boolean status = bankDaoInterface.findUser(username, password);
+        boolean status = dao.findUser(username, password);
         if (status) {
             System.out.println("登录成功\n");
             Properties props = new Properties();
@@ -127,10 +128,10 @@ public class ManagerImpl implements ManagerInterface {
             throw new AccountOverDrawnException("余额不足，无法转账\n");
         } else {
             moneyBean.setBalance(fromMoney);
-            bankDaoInterface.updateMoney(userBean.getUsername(), fromMoney);
+            dao.updateMoney(userBean.getUsername(), fromMoney);
             props.load(new FileInputStream("./userInfo/" + toName + ".properties"));
             BigDecimal toMoney = new BigDecimal(props.getProperty("money")).add(transMoney);
-            bankDaoInterface.updateMoney(toName, toMoney);
+            dao.updateMoney(toName, toMoney);
             System.out.println("转账成功，自己账户余额 = " + fromMoney + "\n");
         }
     }
