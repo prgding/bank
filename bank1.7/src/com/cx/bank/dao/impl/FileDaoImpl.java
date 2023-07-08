@@ -52,6 +52,7 @@ public class FileDaoImpl implements FileDaoInterface {
     @Override
     public void updateMoney(String username, BigDecimal money) throws IOException {
         Properties props = new Properties();
+        props.load(new FileInputStream("./userInfo/" + username + ".properties"));
         props.setProperty("money", money.toString());
         String msg = username + " 的用户信息";
         props.store(new FileOutputStream("./userInfo/" + username + ".properties"), msg);
