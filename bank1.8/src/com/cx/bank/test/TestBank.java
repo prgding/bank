@@ -4,6 +4,7 @@ import com.cx.bank.manager.ManagerInterface;
 import com.cx.bank.manager.impl.ManagerImpl;
 import com.cx.bank.util.AccountOverDrawnException;
 import com.cx.bank.util.InvalidDepositException;
+import com.cx.bank.util.MD5Utils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -27,14 +28,23 @@ public class TestBank {
             switch (scanner.nextInt()) {
                 case 1 -> {
                     try {
-                        unLoggedIn.register();
+                        System.out.println("请输入用户名:");
+                        String username = scanner.next();
+                        System.out.println("请输入密码:");
+                        String password = MD5Utils.hash(scanner.next());
+                        String msg = unLoggedIn.register(username, password);
+                        System.out.println(msg);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 }
                 case 2 -> {
                     try {
-                        ManagerInterface loggedIn = unLoggedIn.login();
+                        System.out.println("请输入用户名:");
+                        String username = scanner.next();
+                        System.out.println("请输入密码:");
+                        String password = MD5Utils.hash(scanner.next());
+                        ManagerInterface loggedIn = unLoggedIn.login(username, password);
                         if (loggedIn != null) {
                             manageFunction(loggedIn);
                         }

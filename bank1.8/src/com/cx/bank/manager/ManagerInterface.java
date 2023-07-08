@@ -24,9 +24,9 @@ public interface ManagerInterface {
 
     void exitSystem() throws IOException;
 
-    void register() throws IOException;
+    String register(String username, String password) throws IOException;
 
-    ManagerInterface login() throws IOException;
+    ManagerInterface login(String username, String password) throws IOException;
 
     MoneyBean getMoneyBean();
 

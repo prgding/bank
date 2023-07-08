@@ -7,14 +7,12 @@ import com.cx.bank.model.MoneyBean;
 import com.cx.bank.model.UserBean;
 import com.cx.bank.util.AccountOverDrawnException;
 import com.cx.bank.util.InvalidDepositException;
-import com.cx.bank.util.MD5Utils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Properties;
-import java.util.Scanner;
 
 /**
  * ManagerImpl
@@ -32,17 +30,17 @@ public class ManagerImpl implements ManagerInterface {
     private FileDaoInterface dao;
 
     public ManagerImpl() {
+        this.dao = UserDaoFactory.getInstance().getDao();
     }
 
     public ManagerImpl(MoneyBean moneyBean, UserBean userBean) {
-        this.dao = UserDaoFactory.getInstance().getDao();
         this.moneyBean = moneyBean;
         this.userBean = userBean;
     }
 
     public static synchronized ManagerInterface getInstance() {
         if (instance == null) {
-            instance = new ManagerImpl(new MoneyBean(), new UserBean());
+            instance = new ManagerImpl();
         }
         return instance;
     }
@@ -85,30 +83,19 @@ public class ManagerImpl implements ManagerInterface {
     }
 
     @Override
-    public void register() throws IOException {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("请输入用户名:");
-        String username = scanner.next();
+    public String register(String username, String password) throws IOException {
         new File("./userInfo").mkdirs();
         boolean status = dao.findByName(username);
         if (status) {
-            System.out.println("该用户名已存在\n");
+            return "该用户名已存在\n";
         } else {
-            System.out.println("请输入密码:");
-            String password = MD5Utils.hash(scanner.next());
             dao.insertUser(username, password);
         }
+        return "注册成功";
     }
 
     @Override
-    public ManagerInterface login() throws IOException {
-        Scanner scanner = new Scanner(System.in);
-        //System.out.println("请输入用户名:");
-        //String username = scanner.next();
-        String username = "1";
-        //System.out.println("请输入密码:");
-        //String password = MD5Utils.hash(scanner.next());
-        String password = "c4ca4238a0b923820dcc509a6f75849b";
+    public ManagerInterface login(String username, String password) throws IOException {
         boolean status = dao.findUser(username, password);
         if (status) {
             System.out.println("登录成功\n");
@@ -116,9 +103,11 @@ public class ManagerImpl implements ManagerInterface {
             props.load(new FileInputStream("./userInfo/" + username + ".properties"));
             BigDecimal fileMoney = new BigDecimal(props.getProperty("money"));
             ManagerInterface instance = ManagerImpl.getInstance();
-            instance.getMoneyBean().setBalance(fileMoney);
-            instance.getUserBean().setUsername(username);
-            instance.getUserBean().setPassword(password);
+            moneyBean = new MoneyBean();
+            moneyBean.setBalance(fileMoney);
+            userBean = new UserBean();
+            userBean.setUsername(username);
+            userBean.setPassword(password);
             return instance;
         } else {
             System.out.println("登录失败，检查你的用户名和密码\n");
@@ -127,18 +116,23 @@ public class ManagerImpl implements ManagerInterface {
     }
 
     public void transfer(String toName, BigDecimal transMoney) throws IOException, AccountOverDrawnException {
-        Properties props = new Properties();
-        props.load(new FileInputStream("./userInfo/" + userBean.getUsername() + ".properties"));
-        BigDecimal fromMoney = new BigDecimal(props.getProperty("money")).subtract(transMoney);
-        if (fromMoney.compareTo(BigDecimal.ZERO) < 0) {
-            throw new AccountOverDrawnException("余额不足，无法转账\n");
+        boolean exist = dao.findByName(toName);
+        if (!exist) {
+            throw new IOException("对方账户不存在");
         } else {
-            moneyBean.setBalance(fromMoney);
-            dao.updateMoney(userBean.getUsername(), fromMoney);
-            props.load(new FileInputStream("./userInfo/" + toName + ".properties"));
-            BigDecimal toMoney = new BigDecimal(props.getProperty("money")).add(transMoney);
-            dao.updateMoney(toName, toMoney);
-            System.out.println("转账成功，自己账户余额 = " + fromMoney + "\n");
+            Properties props = new Properties();
+            props.load(new FileInputStream("./userInfo/" + userBean.getUsername() + ".properties"));
+            BigDecimal fromMoney = new BigDecimal(props.getProperty("money")).subtract(transMoney);
+            if (fromMoney.compareTo(BigDecimal.ZERO) < 0) {
+                throw new AccountOverDrawnException("余额不足，无法转账\n");
+            } else {
+                moneyBean.setBalance(fromMoney);
+                dao.updateMoney(userBean.getUsername(), fromMoney);
+                props.load(new FileInputStream("./userInfo/" + toName + ".properties"));
+                BigDecimal toMoney = new BigDecimal(props.getProperty("money")).add(transMoney);
+                dao.updateMoney(toName, toMoney);
+                System.out.println("转账成功，自己账户余额 = " + fromMoney + "\n");
+            }
         }
     }
 

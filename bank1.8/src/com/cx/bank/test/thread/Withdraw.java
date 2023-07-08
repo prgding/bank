@@ -18,7 +18,7 @@ public class Withdraw implements Runnable {
     public void run() {
         ManagerInterface instance = ManagerImpl.getInstance();
         try {
-            ManagerInterface loggedIn = instance.login();
+            ManagerInterface loggedIn = instance.login("1", "c4ca4238a0b923820dcc509a6f75849b");
             System.out.println("取款前：" + loggedIn.getMoneyBean().getBalance());
             loggedIn.withdrawals(new BigDecimal(1));
         } catch (IOException | AccountOverDrawnException e) {
