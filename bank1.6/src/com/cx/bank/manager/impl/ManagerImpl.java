@@ -26,7 +26,7 @@ import java.util.Scanner;
 
 public class ManagerImpl implements ManagerInterface {
 
-    private static ManagerImpl instance;
+    private static ManagerInterface instance;
     private MoneyBean moneyBean;
     private UserBean userBean;
     private FileDaoInterface dao;

@@ -13,9 +13,9 @@ public class TestBank {
         ManagerImpl manager2 = ManagerImpl.getInstance(moneyBean);
 
         if (manager == manager2) {
-            System.out.println("manager 和 manager2 是同一个实例，实现了单例");
+            System.out.println("service 和 manager2 是同一个实例，实现了单例");
         } else {
-            System.out.println("manager 和 manager2 不是同一个实例，未实现单例");
+            System.out.println("service 和 manager2 不是同一个实例，未实现单例");
         }
 
         Scanner scanner = new Scanner(System.in);

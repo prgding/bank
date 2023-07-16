@@ -20,7 +20,6 @@ import java.util.Scanner;
 public class TestBank {
     public static void main(String[] args) {
         ManagerInterface unLoggedIn = ManagerImpl.getInstance();
-        System.out.println("unLoggedIn = " + unLoggedIn);
         Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.println("=== 请输入操作编号：1.注册  2.登录  3.退出系统 ===");

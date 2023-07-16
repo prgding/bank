@@ -26,16 +26,12 @@ public class TestBank {
             System.out.println("=== 请输入操作编号：1.注册  2.登录  3.退出系统 ===");
             switch (scanner.nextInt()) {
                 case 1 -> {
-                    try {
-                        System.out.println("请输入用户名:");
-                        String username = scanner.next();
-                        System.out.println("请输入密码:");
-                        String password = MD5Utils.hash(scanner.next());
-                        String msg = unLoggedIn.register(username, password);
-                        System.out.println(msg);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                    System.out.println("请输入用户名:");
+                    String username = scanner.next();
+                    System.out.println("请输入密码:");
+                    String password = MD5Utils.hash(scanner.next());
+                    String msg = unLoggedIn.register(username, password);
+                    System.out.println(msg);
                 }
                 case 2 -> {
                     try {
@@ -53,13 +49,7 @@ public class TestBank {
                         System.out.println(e.getMessage());
                     }
                 }
-                case 3 -> {
-                    try {
-                        unLoggedIn.exitSystem();
-                    } catch (IOException e) {
-                        System.out.println(e.getMessage());
-                    }
-                }
+                case 3 -> unLoggedIn.exitSystem();
                 default -> System.out.println("无效的操作编号，请重新输入！");
             }
         }
@@ -70,7 +60,7 @@ public class TestBank {
         while (true) {
             System.out.println("=== 请输入操作编号：1.查询余额  2.取款  3.存款  4.转账  5.退出系统 ===");
             switch (scanner.nextInt()) {
-                case 1 -> System.out.println("余额：" + manager.inquiry() + "\n");
+                case 1 -> System.out.println("余额：" + manager.inquiry(manager.getUserBean().getUsername()) + "\n");
                 case 2 -> {
                     System.out.println("请输入取款金额:");
                     BigDecimal withdrawal = scanner.nextBigDecimal();
@@ -100,13 +90,7 @@ public class TestBank {
                         System.out.println(e.getMessage());
                     }
                 }
-                case 5 -> {
-                    try {
-                        manager.exitSystem();
-                    } catch (IOException e) {
-                        System.out.println(e.getMessage());
-                    }
-                }
+                case 5 -> manager.exitSystem();
                 default -> System.out.println("无效的操作编号，请重新输入！");
             }
         }

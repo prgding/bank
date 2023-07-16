@@ -26,7 +26,7 @@ import java.util.Scanner;
 
 public class ManagerImpl implements ManagerInterface {
 
-    private static ManagerImpl instance;
+    private static ManagerInterface instance;
     private MoneyBean moneyBean;
     private UserBean userBean;
     private FileDaoInterface dao;
@@ -103,12 +103,10 @@ public class ManagerImpl implements ManagerInterface {
     @Override
     public ManagerInterface login() throws IOException {
         Scanner scanner = new Scanner(System.in);
-        //System.out.println("请输入用户名:");
-        //String username = scanner.next();
-        String username = "1";
-        //System.out.println("请输入密码:");
-        //String password = MD5Utils.hash(scanner.next());
-        String password = "c4ca4238a0b923820dcc509a6f75849b";
+        System.out.println("请输入用户名:");
+        String username = scanner.next();
+        System.out.println("请输入密码:");
+        String password = MD5Utils.hash(scanner.next());
         boolean status = dao.findUser(username, password);
         if (status) {
             System.out.println("登录成功\n");

@@ -6,8 +6,6 @@ import com.cx.bank.util.MD5Utils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.math.BigDecimal;
 
 /**
@@ -60,16 +58,12 @@ public class BankApp {
         loginButton.addActionListener(e -> {
             String username = usernameField.getText();
             String password = MD5Utils.hash(new String(passwordField.getPassword()));
-            try {
-                ManagerInterface loggedIn = manager.login(username, password);
-                if (loggedIn != null) {
-                    JOptionPane.showMessageDialog(frame, "登录成功！");
-                    showBankingWindow();
-                }
-            } catch (FileNotFoundException ex) {
-                JOptionPane.showMessageDialog(frame, "没有此用户，请先注册");
-            } catch (IOException exception) {
-                throw new RuntimeException(exception);
+            ManagerInterface loggedIn = manager.login(username, password);
+            if (loggedIn != null) {
+                JOptionPane.showMessageDialog(frame, "登录成功！");
+                showBankingWindow();
+            }else{
+                JOptionPane.showMessageDialog(frame, "登录失败，检查你的用户名和密码");
             }
         });
         frame.add(loginButton);
@@ -105,11 +99,7 @@ public class BankApp {
 
         JButton exitButton = new JButton("退出系统");
         exitButton.addActionListener(e -> {
-            try {
-                manager.exitSystem();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+            manager.exitSystem();
         });
         frame.add(exitButton);
         frame.setVisible(true);

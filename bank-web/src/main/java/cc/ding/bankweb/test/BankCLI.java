@@ -1,10 +1,10 @@
-package com.cx.bank.test;
+package cc.ding.bankweb.test;
 
-import com.cx.bank.manager.ManagerInterface;
-import com.cx.bank.manager.impl.ManagerImpl;
-import com.cx.bank.util.AccountOverDrawnException;
-import com.cx.bank.util.InvalidDepositException;
-import com.cx.bank.util.MD5Utils;
+import cc.ding.bankweb.service.BankService;
+import cc.ding.bankweb.service.impl.BankServiceImpl;
+import cc.ding.bankweb.util.AccountOverDrawnException;
+import cc.ding.bankweb.util.InvalidDepositException;
+import cc.ding.bankweb.util.MD5Utils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,30 +12,28 @@ import java.math.BigDecimal;
 import java.util.Scanner;
 
 /**
- * TestBank
+ * BankCLI
  * 测试类
  *
  * @author dingshuai
  * @version 1.8
  */
-public class TestBank {
+public class BankCLI {
+    private BankService bankService;
+
     public static void main(String[] args) {
-        ManagerInterface unLoggedIn = ManagerImpl.getInstance();
+        BankService unLoggedIn = BankServiceImpl.getInstance();
         Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.println("=== 请输入操作编号：1.注册  2.登录  3.退出系统 ===");
             switch (scanner.nextInt()) {
                 case 1 -> {
-                    try {
-                        System.out.println("请输入用户名:");
-                        String username = scanner.next();
-                        System.out.println("请输入密码:");
-                        String password = MD5Utils.hash(scanner.next());
-                        String msg = unLoggedIn.register(username, password);
-                        System.out.println(msg);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                    System.out.println("请输入用户名:");
+                    String username = scanner.next();
+                    System.out.println("请输入密码:");
+                    String password = MD5Utils.hash(scanner.next());
+                    String msg = unLoggedIn.register(username, password);
+                    System.out.println(msg);
                 }
                 case 2 -> {
                     try {
@@ -43,7 +41,7 @@ public class TestBank {
                         String username = scanner.next();
                         System.out.println("请输入密码:");
                         String password = MD5Utils.hash(scanner.next());
-                        ManagerInterface loggedIn = unLoggedIn.login(username, password);
+                        BankService loggedIn = unLoggedIn.login(username, password);
                         if (loggedIn != null) {
                             manageFunction(loggedIn);
                         }
@@ -65,12 +63,12 @@ public class TestBank {
         }
     }
 
-    public static void manageFunction(ManagerInterface manager) throws IOException {
+    public static void manageFunction(BankService manager) throws IOException {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.println("=== 请输入操作编号：1.查询余额  2.取款  3.存款  4.转账  5.退出系统 ===");
             switch (scanner.nextInt()) {
-                case 1 -> System.out.println("余额：" + manager.inquiry() + "\n");
+                case 1 -> System.out.println("余额：" + manager.inquiry(manager.getUserBean().getUsername()) + "\n");
                 case 2 -> {
                     System.out.println("请输入取款金额:");
                     BigDecimal withdrawal = scanner.nextBigDecimal();
@@ -110,5 +108,6 @@ public class TestBank {
                 default -> System.out.println("无效的操作编号，请重新输入！");
             }
         }
+
     }
 }
