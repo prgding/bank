@@ -1,6 +1,6 @@
 package com.cx.bank.factory;
 
-import com.cx.bank.dao.BankDaoInterface;
+import com.cx.bank.dao.BankDao;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,11 +11,11 @@ import java.util.Properties;
  * 通过反射创建对象
  *
  * @author dingshuai
- * @version 1.8
+ * @version 1.9
  */
 public class UserDaoFactory {
     private static UserDaoFactory instance = new UserDaoFactory();
-    private BankDaoInterface dao;
+    private BankDao dao;
 
     private UserDaoFactory() {
         try {
@@ -26,7 +26,7 @@ public class UserDaoFactory {
             // 2.获取 className
             String className = props.getProperty("className");
             // 3.通过反射创建对象
-            dao = (BankDaoInterface) Class.forName(className).newInstance();
+            dao = (BankDao) Class.forName(className).newInstance();
         } catch (IOException | ClassNotFoundException | IllegalAccessException | InstantiationException e) {
             throw new RuntimeException(e);
         }
@@ -36,7 +36,7 @@ public class UserDaoFactory {
         return instance;
     }
 
-    public BankDaoInterface getDao() {
+    public BankDao getDao() {
         return dao;
     }
 }

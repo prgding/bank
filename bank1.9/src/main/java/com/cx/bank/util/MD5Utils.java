@@ -9,7 +9,7 @@ import java.security.NoSuchAlgorithmException;
  * MD5加密工具类
  *
  * @author dingshuai
- * @version 1.8
+ * @version 1.9
  */
 public class MD5Utils {
     public static String hash(String password) {

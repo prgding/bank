@@ -8,7 +8,7 @@ import java.util.Objects;
  * 封装余额的类
  *
  * @author dingshuai
- * @version 1.8
+ * @version 1.9
  */
 public class MoneyBean {
     private BigDecimal balance;

@@ -3,7 +3,13 @@ package com.cx.bank.util;
 import java.sql.*;
 import java.util.ResourceBundle;
 
-// JDBC 的工具类
+/**
+ * DBUtil
+ * 数据库工具类
+ *
+ * @author dingshuai
+ * @version 1.9
+ */
 public class DBUtil {
 
     // 静态变量

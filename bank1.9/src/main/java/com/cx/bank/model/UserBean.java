@@ -7,7 +7,7 @@ import java.util.Objects;
  * 封装用户信息的类
  *
  * @author dingshuai
- * @version 1.8
+ * @version 1.9
  */
 public class UserBean {
     private String username;

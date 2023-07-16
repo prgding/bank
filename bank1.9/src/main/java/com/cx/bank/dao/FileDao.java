@@ -7,13 +7,13 @@ import java.io.IOException;
 import java.math.BigDecimal;
 
 /**
- * FileDaoInterface
+ * FileDao
  * BankDaoInterface接口
  *
  * @author dingshuai
- * @version 1.8
+ * @version 1.9
  */
-public interface FileDaoInterface {
+public interface FileDao {
     void saveMoney(MoneyBean moneyBean, UserBean userBean) throws IOException;
     void insertUser(String username,String password) throws IOException;
     void updateMoney(String username, BigDecimal money) throws IOException;

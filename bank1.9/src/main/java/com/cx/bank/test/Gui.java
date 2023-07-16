@@ -1,7 +1,7 @@
-package com.cx.bank.test.gui;
+package com.cx.bank.test;
 
 import com.cx.bank.manager.ManagerInterface;
-import com.cx.bank.manager.impl.ManagerImpl;
+import com.cx.bank.manager.ManagerImpl;
 import com.cx.bank.util.MD5Utils;
 
 import javax.swing.*;
@@ -9,13 +9,13 @@ import java.awt.*;
 import java.math.BigDecimal;
 
 /**
- * BankApp
+ * Gui
  * GUI 界面
  *
  * @author dingshuai
- * @version 1.6
+ * @version 1.9
  */
-public class BankApp {
+public class Gui {
     private ManagerInterface manager;
     private JFrame frame;
     private JTextField usernameField;
@@ -24,7 +24,7 @@ public class BankApp {
     private JTextField recipientField;
 
 
-    public BankApp() {
+    public Gui() {
         manager = ManagerImpl.getInstance();
 
         frame = new JFrame("欢迎界面");
@@ -71,7 +71,7 @@ public class BankApp {
     }
 
     public static void main(String[] args) {
-        new BankApp();
+        new Gui();
     }
 
     private void showBankingWindow() {

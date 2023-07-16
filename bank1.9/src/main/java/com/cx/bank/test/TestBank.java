@@ -1,14 +1,16 @@
 package com.cx.bank.test;
 
+import com.cx.bank.exception.AccountOverDrawnException;
+import com.cx.bank.exception.InvalidDepositException;
+import com.cx.bank.manager.ManagerImpl;
 import com.cx.bank.manager.ManagerInterface;
-import com.cx.bank.manager.impl.ManagerImpl;
-import com.cx.bank.util.AccountOverDrawnException;
-import com.cx.bank.util.InvalidDepositException;
+import com.cx.bank.model.Account;
 import com.cx.bank.util.MD5Utils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -16,7 +18,7 @@ import java.util.Scanner;
  * 测试类
  *
  * @author dingshuai
- * @version 1.8
+ * @version 1.9
  */
 public class TestBank {
     public static void main(String[] args) {
@@ -41,7 +43,11 @@ public class TestBank {
                         String password = MD5Utils.hash(scanner.next());
                         ManagerInterface loggedIn = unLoggedIn.login(username, password);
                         if (loggedIn != null) {
-                            manageFunction(loggedIn);
+                            if (loggedIn.getUserBean().getUsername().equals("admin")) {
+                                adminFunction(loggedIn);
+                            } else {
+                                manageFunction(loggedIn);
+                            }
                         }
                     } catch (FileNotFoundException e) {
                         System.out.println("没有此用户，请先注册\n");
@@ -53,6 +59,44 @@ public class TestBank {
                 default -> System.out.println("无效的操作编号，请重新输入！");
             }
         }
+    }
+
+    private static void adminFunction(ManagerInterface loggedIn) {
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            System.out.println("=== 请输入操作编号：1.查询所有账户状态  2.冻结账户  3.解冻账户  4.退出系统===");
+            switch (scanner.nextInt()) {
+                case 1 -> showAllAccountFlags(loggedIn);
+                case 2 -> {
+                    System.out.println("请输入要冻结的用户名:");
+                    String username = scanner.next();
+                    loggedIn.freezeUser(username);
+                    showNewFlag(loggedIn, username);
+                }
+                case 3 -> {
+                    System.out.println("请输入要解冻的用户名:");
+                    String username = scanner.next();
+                    loggedIn.unfreezeUser(username);
+                    showNewFlag(loggedIn, username);
+                }
+                case 4 -> loggedIn.exitSystem();
+                default -> System.out.println("无效的操作编号，请重新输入！");
+            }
+        }
+    }
+
+    private static void showAllAccountFlags(ManagerInterface loggedIn) {
+        List<Account> accounts = loggedIn.inquiryAllUser();
+        System.out.println("用户名, 用户状态");
+        for (Account act : accounts) {
+            System.out.println(act.getUsername() + ", " + (act.getUserFlag() == 1 ? "正常" : "冻结"));
+        }
+    }
+
+    private static void showNewFlag(ManagerInterface loggedIn, String username) {
+        Account act = loggedIn.inquiryUser(username);
+        System.out.println("用户名, 用户状态");
+        System.out.println(username + ", " + (act.getUserFlag() == 1 ? "正常" : "冻结"));
     }
 
     public static void manageFunction(ManagerInterface manager) throws IOException {

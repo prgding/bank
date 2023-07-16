@@ -1,6 +1,5 @@
-package com.cx.bank.dao.impl;
+package com.cx.bank.dao;
 
-import com.cx.bank.dao.FileDaoInterface;
 import com.cx.bank.model.MoneyBean;
 import com.cx.bank.model.UserBean;
 
@@ -16,9 +15,9 @@ import java.util.Properties;
  * 实现BankDaoInterface接口
  *
  * @author dingshuai
- * @version 1.8
+ * @version 1.9
  */
-public class FileDaoImpl implements FileDaoInterface {
+public class FileDaoImpl implements FileDao {
     @Override
     public BigDecimal getMoney(String username) throws IOException {
         Properties props = new Properties();
