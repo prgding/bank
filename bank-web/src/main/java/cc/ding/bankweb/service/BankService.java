@@ -2,12 +2,9 @@ package cc.ding.bankweb.service;
 
 
 import cc.ding.bankweb.model.Account;
-import cc.ding.bankweb.model.MoneyBean;
-import cc.ding.bankweb.model.UserBean;
 import cc.ding.bankweb.util.AccountOverDrawnException;
 import cc.ding.bankweb.util.InvalidDepositException;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 
 /**
@@ -18,29 +15,17 @@ import java.math.BigDecimal;
  * @version 1.8
  */
 public interface BankService {
-    String deposit(BigDecimal amount) throws InvalidDepositException;
-
-    String withdrawals(BigDecimal amount) throws AccountOverDrawnException;
-
-    BigDecimal inquiry(String username);
-
-    void exitSystem() throws IOException;
-
     boolean checkIfExists(String username);
-
-    Account checkPwd(String username, String password);
 
     String register(String username, String password);
 
-    BankService login(String username, String password);
+    Account checkPwd(String username, String password);
 
-    MoneyBean getMoneyBean();
+    BigDecimal inquiry(String username);
 
-    void setMoneyBean(MoneyBean moneyBean);
+    String withdrawals(String username, BigDecimal amount) throws AccountOverDrawnException;
 
-    UserBean getUserBean();
+    String deposit(String username, BigDecimal amount) throws InvalidDepositException;
 
-    void setUserBean(UserBean userBean);
-
-    String transfer(String toName, BigDecimal transMoney) throws AccountOverDrawnException;
+    String transfer(String fromName, String toName, BigDecimal transMoney) throws AccountOverDrawnException;
 }

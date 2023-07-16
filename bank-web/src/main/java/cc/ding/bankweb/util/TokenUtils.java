@@ -63,7 +63,7 @@ public class TokenUtils {
     /**
      * 从客户端归还的token中获取用户信息的方法
      */
-    public Account getCurrentUser(String token) {
+    public Account getAccount(String token) {
         if (StringUtils.isEmpty(token)) {
             throw new BusinessException("令牌为空，请登录！");
         }

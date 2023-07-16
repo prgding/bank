@@ -18,6 +18,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -79,12 +80,10 @@ public class BankController {
             System.out.println("验证码错误");
             return Result.err(Result.CODE_ERR_BUSINESS, "验证码错误");
         }
-        if (bankService.login(user.getUsername(), user.getPassword()) != null) {
+        Account checkPwd = bankService.checkPwd(user.getUsername(), user.getPassword());
+        if (checkPwd != null) {
             System.out.println("登录成功");
-            Account account = bankService.checkPwd(user.getUsername(), user.getPassword());
-            System.out.println("account = " + account);
-            String token = tokenUtils.loginSign(account);
-            System.out.println("token = " + token);
+            String token = tokenUtils.loginSign(checkPwd);
             return Result.ok("登录成功", token);
         } else {
             System.out.println("密码错误");
@@ -92,38 +91,65 @@ public class BankController {
         }
     }
 
+    @GetMapping("/curr-user")
+    public Result getCurrUser(@RequestHeader("Token") String token) {
+        Account account = tokenUtils.getAccount(token);
+        if (account != null) {
+            return Result.ok("获取当前用户成功", account);
+        }
+        return Result.err(Result.CODE_ERR_BUSINESS, "获取当前用户失败");
+    }
+
     @GetMapping("/inquiry")
-    public String inquiry(@RequestHeader("Token") String token) {
-        System.out.println("inquiry exec");
-        System.out.println("token = " + token);
-        Account currentUser = tokenUtils.getCurrentUser(token);
-        return bankService.inquiry(currentUser.getUsername()).toString();
+    public Result inquiry(@RequestHeader("Token") String token) {
+        Account account = tokenUtils.getAccount(token);
+        String balance = bankService.inquiry(account.getUsername()).toString();
+        if (balance != null) {
+            return Result.ok("查询成功", balance);
+        }
+        return Result.err(Result.CODE_ERR_BUSINESS, "查询失败");
     }
 
     @PostMapping("/withdraw")
-    public String withdraw(String amount) {
+    public Result withdraw(@RequestHeader("Token") String token, @RequestBody Map<String, Double> payload) {
+        System.out.println("payload = " + payload);
+        Double amount = payload.get("amount");
+        System.out.println("amount = " + amount);
+        Account account = tokenUtils.getAccount(token);
         try {
-            return bankService.withdrawals(new BigDecimal(amount));
+            String withdrawals = bankService.withdrawals(account.getUsername(), new BigDecimal(amount));
+            return Result.ok("取款成功", withdrawals);
         } catch (AccountOverDrawnException e) {
-            throw new RuntimeException(e);
+            return Result.err(Result.CODE_ERR_BUSINESS, "余额不足");
         }
     }
 
     @PostMapping("/deposit")
-    public String deposit(String amount) {
+    public Result deposit(@RequestHeader("Token") String token, @RequestBody Map<String, Double> payload) {
+        Double amount = payload.get("amount");
+        Account account = tokenUtils.getAccount(token);
         try {
-            return bankService.deposit(new BigDecimal(amount));
+            String deposit = bankService.deposit(account.getUsername(), new BigDecimal(amount));
+            return Result.ok("存款成功", deposit);
         } catch (InvalidDepositException e) {
-            throw new RuntimeException(e);
+            return Result.err(Result.CODE_ERR_BUSINESS, "存款金额不合法");
         }
     }
 
     @PostMapping("/transfer")
-    public String transfer(String toName, String transMoney) {
+    public Result transfer(@RequestHeader("Token") String token, @RequestBody Map<String, String> payload) {
+        String toName = payload.get("toName");
+        String transMoney = payload.get("transMoney");
+        Account account = tokenUtils.getAccount(token);
+        String transfer;
         try {
-            return bankService.transfer(toName, new BigDecimal(transMoney));
+            transfer = bankService.transfer(account.getUsername(), toName, new BigDecimal(transMoney));
+            if (transfer.equals("转账成功")) {
+                return Result.ok("转账成功", transfer);
+            }
         } catch (AccountOverDrawnException e) {
-            throw new RuntimeException(e);
+            return Result.err(Result.CODE_ERR_BUSINESS, "余额不足");
         }
+        return Result.err(Result.CODE_ERR_BUSINESS, transfer);
     }
 }
