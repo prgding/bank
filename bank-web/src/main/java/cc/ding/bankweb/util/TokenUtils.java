@@ -36,7 +36,7 @@ public class TokenUtils {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
     //注入配置文件中的warehouse.expire-time属性 -- token的过期时间
-    @Value("${warehouse.expire-time}")
+    @Value("${token.expire-time}")
     private int expireTime;
 
     private String sign(Account account) {

@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @RestController
-@CrossOrigin
+@CrossOrigin()
 public class BankController {
     @Autowired
     private Producer producer;
@@ -48,7 +48,7 @@ public class BankController {
         BufferedImage bi = producer.createImage(code);
 
         //将验证码文本存储到redis
-        redis.opsForValue().set(code, code, 2, TimeUnit.MINUTES);
+        redis.opsForValue().set(code, code, 5, TimeUnit.MINUTES);
 
         //将验证码图片响应给浏览器
         //输出图片
@@ -93,6 +93,7 @@ public class BankController {
 
     @GetMapping("/curr-user")
     public Result getCurrUser(@RequestHeader("Token") String token) {
+        System.out.println("exec");
         Account account = tokenUtils.getAccount(token);
         if (account != null) {
             return Result.ok("获取当前用户成功", account);
