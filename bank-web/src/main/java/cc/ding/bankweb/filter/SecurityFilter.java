@@ -24,7 +24,7 @@ public class SecurityFilter implements Filter {
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
-        System.out.print(request.getServletPath() + "\t" + request.getMethod() + "\t");
+        System.out.print(request.getServletPath() + ", " + request.getMethod() + ", ");
 
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Headers", "*");
@@ -33,6 +33,7 @@ public class SecurityFilter implements Filter {
         ArrayList<String> allowList = new ArrayList<>();
         allowList.add("/login");
         allowList.add("/register");
+        allowList.add("/captcha-code");
         allowList.add("/captcha");
 
         // Release these requests

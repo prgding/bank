@@ -13,7 +13,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -56,7 +55,7 @@ public class TokenUtils {
         //生成token
         String token = sign(account);
         //将token保存到redis中,并设置token在redis中的过期时间
-        stringRedisTemplate.opsForValue().set(token, token, expireTime * 2, TimeUnit.SECONDS);
+        stringRedisTemplate.opsForValue().set(token, token, expireTime * 2L, TimeUnit.SECONDS);
         return token;
     }
 
@@ -75,11 +74,11 @@ public class TokenUtils {
             throw new BusinessException("令牌格式错误，请登录！");
         }
         //从解码后的token中获取用户信息并封装到CurrentUser对象中返回
-        long userId = decodedJWT.getClaim(CLAIM_NAME_USERID).asLong();//用户账号id
+        int userId = decodedJWT.getClaim(CLAIM_NAME_USERID).asInt();//用户账号id
         String userName = decodedJWT.getClaim(CLAIM_NAME_USERNAME).asString();//用户姓名
         if (StringUtils.isEmpty(userName)) {
             throw new BusinessException("令牌缺失用户信息，请登录！");
         }
-        return new Account(userId, userName, " ", new BigDecimal("0"));
+        return new Account(userId, userName, null, null, null);
     }
 }

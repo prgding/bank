@@ -1,4 +1,4 @@
-package cc.ding.bankweb.util;
+package cc.ding.bankweb.exception;
 
 /**
  * AccountOverDrawnException
