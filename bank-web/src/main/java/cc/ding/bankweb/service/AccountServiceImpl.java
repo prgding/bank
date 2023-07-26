@@ -33,7 +33,7 @@ public class AccountServiceImpl implements AccountService {
             throw new AccountOverDrawnException("余额不足，无法取款");
         } else {
             balance = balance.subtract(amount);
-            accountRepository.updateAccount(username, balance);
+            accountRepository.updateBalance(username, balance);
             Integer id = accountRepository.findByUsername(username).getId();
             Log log = new Log(null, "取款", amount, id);
             logRepository.save(log);
@@ -47,7 +47,7 @@ public class AccountServiceImpl implements AccountService {
             throw new InvalidDepositException("存款不能为负");
         } else {
             BigDecimal balance = inquiry(username).add(amount);
-            accountRepository.updateAccount(username, balance);
+            accountRepository.updateBalance(username, balance);
             Integer id = accountRepository.findByUsername(username).getId();
             Log log = new Log(null, "存款", amount, id);
             logRepository.save(log);
@@ -65,7 +65,7 @@ public class AccountServiceImpl implements AccountService {
             if (fromMoney.compareTo(BigDecimal.ZERO) < 0) {
                 throw new AccountOverDrawnException("余额不足，无法转账\n");
             } else {
-                accountRepository.updateAccount(fromName, fromMoney);
+                accountRepository.updateBalance(fromName, fromMoney);
                 Integer fromId = accountRepository.findByUsername(fromName).getId();
                 Log fromLog = new Log(null, "转账", transMoney, fromId);
                 logRepository.save(fromLog);
@@ -74,7 +74,7 @@ public class AccountServiceImpl implements AccountService {
                 Integer toId = accountRepository.findByUsername(toName).getId();
                 Log toLog = new Log(null, "收款", transMoney, toId);
                 logRepository.save(toLog);
-                accountRepository.updateAccount(act.getUsername(), toMoney);
+                accountRepository.updateBalance(act.getUsername(), toMoney);
                 return "转账成功";
             }
         }

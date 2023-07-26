@@ -16,7 +16,19 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
     @Modifying
     @Transactional
     @Query("UPDATE Account a SET a.balance = :balance WHERE a.username = :username")
-    void updateAccount(@Param("username") String username, @Param("balance") BigDecimal balance);
+    void updateBalance(@Param("username") String username, @Param("balance") BigDecimal balance);
+
+    @Modifying
+    @Transactional
+    @Query("update Account a set a.userFlag = :userFlag where a.id = :id")
+    void updateFlag(@Param("id") Integer id, @Param("userFlag") Integer userFlag);
+
+    @Modifying
+    @Query("UPDATE Account a SET a.username = :username, a.balance = :balance WHERE a.id = :id")
+    @Transactional
+    void updateUser(@Param("id") Integer id, @Param("username") String username, @Param("balance") BigDecimal balance);
+
+
 
     Account findByUsername(String username);
 
