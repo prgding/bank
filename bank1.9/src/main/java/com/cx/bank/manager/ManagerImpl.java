@@ -7,6 +7,7 @@ import com.cx.bank.exception.AccountOverDrawnException;
 import com.cx.bank.exception.InvalidDepositException;
 import com.cx.bank.factory.UserDaoFactory;
 import com.cx.bank.model.Account;
+import com.cx.bank.model.Log;
 import com.cx.bank.model.MoneyBean;
 import com.cx.bank.model.UserBean;
 import lombok.Data;
@@ -90,7 +91,6 @@ public class ManagerImpl implements ManagerInterface {
             System.out.println("存款成功，余额：" + balance + "\n");
         }
         Account one = bankDao.findOne(userBean.getUsername());
-        System.out.println("one.getUserId() = " + one.getUserId());
         logDao.insert("存款", amount, one.getUserId());
         bankDao.updateMoney(userBean.getUsername(), moneyBean.getBalance());
     }
@@ -106,7 +106,6 @@ public class ManagerImpl implements ManagerInterface {
             System.out.println("取款成功，余额：" + balance + "\n");
         }
         Account one = bankDao.findOne(userBean.getUsername());
-        System.out.println("one = " + one);
         logDao.insert("取款", amount, one.getUserId());
         bankDao.updateMoney(userBean.getUsername(), moneyBean.getBalance());
     }
@@ -162,5 +161,10 @@ public class ManagerImpl implements ManagerInterface {
     @Override
     public void unfreezeUser(String username) {
         bankDao.updateFlag(username, 1);
+    }
+
+    @Override
+    public List<Log> findLogsByName(String username) {
+        return logDao.findLogsByName(username);
     }
 }

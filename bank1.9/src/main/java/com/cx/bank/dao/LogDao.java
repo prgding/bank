@@ -11,4 +11,6 @@ public interface LogDao {
     Log findOne(int userId);
 
     List<Log> findAll();
+
+    List<Log> findLogsByName(String username);
 }

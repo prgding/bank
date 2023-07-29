@@ -30,11 +30,7 @@ public class AdminController {
             map.put("id", account.getId());
             map.put("username", account.getUsername());
             map.put("balance", account.getBalance());
-            if (account.getUserFlag() == 1) {
-                map.put("flag", "正常");
-            } else {
-                map.put("flag", "冻结");
-            }
+            map.put("userFlag", account.getUserFlag());
             formatList.add(map);
         });
         return Result.ok("ok", formatList);

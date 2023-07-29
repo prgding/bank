@@ -82,4 +82,29 @@ public class LogDaoImpl implements LogDao {
             DBUtil.close(conn, ps, rs);
         }
     }
+
+    @Override
+    public List<Log> findLogsByName(String username) {
+        ArrayList<Log> logs = new ArrayList<>();
+        try {
+            conn = DBUtil.getConnection();
+            String sql = "select * from t_log where userid = (select user_id from t_user where user_name = ?)";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, username);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Log log = new Log();
+                log.setLogId(rs.getInt("log_id"));
+                log.setLogType(rs.getString("log_type"));
+                log.setLogAmount(rs.getBigDecimal("log_amount"));
+                log.setUserId(rs.getInt("userid"));
+                logs.add(log);
+            }
+            return logs;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            DBUtil.close(conn, ps, rs);
+        }
+    }
 }

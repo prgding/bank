@@ -5,6 +5,7 @@ import com.cx.bank.exception.InvalidDepositException;
 import com.cx.bank.manager.ManagerImpl;
 import com.cx.bank.manager.ManagerInterface;
 import com.cx.bank.model.Account;
+import com.cx.bank.model.Log;
 import com.cx.bank.util.MD5Utils;
 
 import java.io.FileNotFoundException;
@@ -102,7 +103,7 @@ public class TestBank {
     public static void manageFunction(ManagerInterface manager) throws IOException {
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            System.out.println("=== 请输入操作编号：1.查询余额  2.取款  3.存款  4.转账  5.退出系统 ===");
+            System.out.println("=== 请输入操作编号：1.查询余额  2.取款  3.存款  4.转账  5.查询操作明细  6.退出系统 ===");
             switch (scanner.nextInt()) {
                 case 1 -> System.out.println("余额：" + manager.inquiry(manager.getUserBean().getUsername()) + "\n");
                 case 2 -> {
@@ -134,7 +135,16 @@ public class TestBank {
                         System.out.println(e.getMessage());
                     }
                 }
-                case 5 -> manager.exitSystem();
+                case 5 -> {
+                    String username = manager.getUserBean().getUsername();
+                    List<Log> logs = manager.findLogsByName(username);
+                    System.out.println("操作编号, 操作类型, 操作金额, 用户编号");
+                    for (Log log : logs) {
+                        System.out.printf("%s, %s, %s, %s%n", log.getLogId(), log.getLogType(), log.getLogAmount(), log.getUserId());
+
+                    }
+                }
+                case 6 -> manager.exitSystem();
                 default -> System.out.println("无效的操作编号，请重新输入！");
             }
         }

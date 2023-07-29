@@ -1,6 +1,7 @@
 package com.cx.bank.manager;
 
 import com.cx.bank.model.Account;
+import com.cx.bank.model.Log;
 import com.cx.bank.model.MoneyBean;
 import com.cx.bank.model.UserBean;
 import com.cx.bank.exception.AccountOverDrawnException;
@@ -47,4 +48,6 @@ public interface ManagerInterface {
     void freezeUser(String username);
 
     void unfreezeUser(String username);
+
+    List<Log> findLogsByName(String username);
 }
