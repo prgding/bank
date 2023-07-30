@@ -22,14 +22,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class TokenUtils {
 
-    /**
-     * 常量:
-     */
-    //token中存放用户id对应的名字
     private static final String CLAIM_NAME_USERID = "CLAIM_NAME_USERID";
-    //token中存放用户名对应的名字
-    private static final String CLAIM_NAME_USERCODE = "CLAIM_NAME_USERCODE";
-    //token中存放用户真实姓名对应的名字
     private static final String CLAIM_NAME_USERNAME = "CLAIM_NAME_USERNAME";
     //注入redis模板
     @Autowired
@@ -39,13 +32,9 @@ public class TokenUtils {
     private int expireTime;
 
     private String sign(Account account) {
-        String token = JWT.create()
-                .withClaim(CLAIM_NAME_USERID, account.getId())
-                .withClaim(CLAIM_NAME_USERNAME, account.getUsername())
-                .withIssuedAt(new Date())//发行时间
-                .withExpiresAt(new Date(System.currentTimeMillis() + expireTime * 1000))//有效时间
+        return JWT.create().withClaim(CLAIM_NAME_USERID, account.getId()).withClaim(CLAIM_NAME_USERNAME, account.getUsername()).withIssuedAt(new Date())//发行时间
+                .withExpiresAt(new Date(System.currentTimeMillis() + expireTime * 1000L))//有效时间
                 .sign(Algorithm.HMAC256(account.getPassword()));
-        return token;
     }
 
     /**
@@ -67,18 +56,17 @@ public class TokenUtils {
             throw new BusinessException("令牌为空，请登录！");
         }
         //对token进行解码,获取解码后的token
-        DecodedJWT decodedJWT = null;
+        DecodedJWT decodedJWT;
         try {
             decodedJWT = JWT.decode(token);
         } catch (JWTDecodeException e) {
             throw new BusinessException("令牌格式错误，请登录！");
         }
         //从解码后的token中获取用户信息并封装到CurrentUser对象中返回
-        int userId = decodedJWT.getClaim(CLAIM_NAME_USERID).asInt();//用户账号id
         String userName = decodedJWT.getClaim(CLAIM_NAME_USERNAME).asString();//用户姓名
         if (StringUtils.isEmpty(userName)) {
             throw new BusinessException("令牌缺失用户信息，请登录！");
         }
-        return new Account(userId, userName, null, null, null);
+        return new Account(null, userName, null, null, null, null);
     }
 }

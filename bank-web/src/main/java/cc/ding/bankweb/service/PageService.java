@@ -1,7 +1,6 @@
 package cc.ding.bankweb.service;
 
 import cc.ding.bankweb.model.Account;
-import cc.ding.bankweb.model.Log;
 import org.springframework.data.domain.Page;
 
 
@@ -13,5 +12,5 @@ public interface PageService {
 
     Page<Account> findUsers(int page, int size);
 
-    Page<Log> findLogs(int page, int size);
+    Page<Object[]> findLogs(int page, int size);
 }

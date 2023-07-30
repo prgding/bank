@@ -35,6 +35,7 @@ public class SecurityFilter implements Filter {
         allowList.add("/register");
         allowList.add("/captcha-code");
         allowList.add("/captcha");
+        allowList.add("/api/upload");
 
         // Release these requests
         if (allowList.contains(request.getServletPath())) {

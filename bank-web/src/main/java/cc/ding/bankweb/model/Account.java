@@ -22,4 +22,5 @@ public class Account {
     private String password;
     private BigDecimal balance;
     private Integer userFlag;
+    private String imageUrl;
 }

@@ -36,7 +36,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public String register(String username, String password) {
         password = MD5Utils.hash(password);
-        accountRepository.save(new Account(null, username, password, new BigDecimal(10), 1));
+        accountRepository.save(new Account(null, username, password, new BigDecimal(10), 1, null));
         return "注册成功";
     }
 
