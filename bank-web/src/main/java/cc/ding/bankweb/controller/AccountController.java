@@ -25,8 +25,12 @@ public class AccountController {
     @GetMapping("/curr-user")
     public Result getCurrUser(@RequestHeader("Token") String token) {
         Account account = tokenUtils.getAccount(token);
+
+        Account dbAct = loginService.checkIfExists(account.getUsername());
+        System.out.println("dbAct = " + dbAct);
+
         if (account != null) {
-            return Result.ok("获取当前用户成功", account);
+            return Result.ok("获取当前用户成功", dbAct);
         }
         return Result.err(Result.CODE_ERR_BUSINESS, "获取当前用户失败");
     }

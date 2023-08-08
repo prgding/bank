@@ -7,8 +7,8 @@ import java.math.BigDecimal;
 
 public class ManagerImpl implements ManagerInterface {
 
-    private static ManagerImpl instance;
-    private MoneyBean moneyBean;
+    private static ManagerInterface instance;
+    private final MoneyBean moneyBean;
 
     public ManagerImpl(MoneyBean moneyBean) {
         this.moneyBean = moneyBean;

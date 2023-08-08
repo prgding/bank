@@ -13,4 +13,8 @@ public interface PageService {
     Page<Account> findUsers(int page, int size);
 
     Page<Object[]> findLogs(int page, int size);
+
+    Page<Object[]> findLogsByUserId(int page, int size, int userId);
+
+    int logsAmountByUserId(Integer id);
 }

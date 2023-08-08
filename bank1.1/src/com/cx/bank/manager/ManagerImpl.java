@@ -9,11 +9,14 @@ public class ManagerImpl {
     private static ManagerImpl instance;
     private MoneyBean moneyBean;
 
-    public ManagerImpl(MoneyBean moneyBean) {
+    private ManagerImpl() {
+    }
+
+    private ManagerImpl(MoneyBean moneyBean) {
         this.moneyBean = moneyBean;
     }
 
-    public static synchronized ManagerImpl getInstance(MoneyBean moneyBean) {
+    public synchronized static ManagerImpl getInstance(MoneyBean moneyBean) {
         if (instance == null) {
             instance = new ManagerImpl(moneyBean);
         }

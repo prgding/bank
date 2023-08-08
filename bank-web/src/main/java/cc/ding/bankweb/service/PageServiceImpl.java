@@ -37,4 +37,17 @@ public class PageServiceImpl implements PageService {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
         return logRepository.findAllLogWithUsername(pageRequest);
     }
+
+    @Override
+    public Page<Object[]> findLogsByUserId(int page, int size, int userId) {
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        logRepository.findLogWithUsernameByUserId(pageRequest, userId).getSize();
+        return logRepository.findLogWithUsernameByUserId(pageRequest, userId);
+    }
+
+    @Override
+    public int logsAmountByUserId(Integer id) {
+        return logRepository.findByUserId(id).size();
+    }
+
 }

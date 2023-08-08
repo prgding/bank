@@ -11,7 +11,7 @@ import cc.ding.bankweb.model.Account;
  * @version 1.8
  */
 public interface LoginService {
-    boolean checkIfExists(String username);
+    Account checkIfExists(String username);
 
     String register(String username, String password);
 

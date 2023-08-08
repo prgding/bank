@@ -28,7 +28,7 @@ public class ManagerImpl implements ManagerInterface {
     private static ManagerImpl instance;
     private MoneyBean moneyBean;
     private UserBean userBean;
-    private BankDaoInterface bankDaoInterface = new BankDaoImpl();
+    private final BankDaoInterface bankDaoInterface = new BankDaoImpl();
 
     public ManagerImpl() {
 
@@ -108,7 +108,6 @@ public class ManagerImpl implements ManagerInterface {
             Properties props = new Properties();
             props.load(new FileInputStream("./userInfo/" + username + ".properties"));
             BigDecimal fileMoney = new BigDecimal(props.getProperty("money"));
-            ManagerInterface instance = ManagerImpl.getInstance();
             instance.setMoneyBean(new MoneyBean(fileMoney));
             instance.setUserBean(new UserBean(username, password));
             return instance;

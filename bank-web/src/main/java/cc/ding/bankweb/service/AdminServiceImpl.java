@@ -38,7 +38,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public void updateUser(Account act) {
-        accountRepository.updateUser(act.getId(), act.getUsername(), act.getBalance());
+        accountRepository.save(act);
     }
 
     @Override

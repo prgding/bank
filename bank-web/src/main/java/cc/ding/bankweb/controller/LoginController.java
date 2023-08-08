@@ -65,7 +65,7 @@ public class LoginController {
 
     @PostMapping("/register")
     public String register(@RequestBody LoginUser user) {
-        if (loginService.checkIfExists(user.getUsername())) {
+        if (loginService.checkIfExists(user.getUsername()) != null) {
             return "用户已存在";
         }
         if (Boolean.FALSE.equals(redis.hasKey(user.getCaptchaCode()))) {
@@ -76,7 +76,7 @@ public class LoginController {
 
     @PostMapping("/login")
     public Result login(@RequestBody LoginUser user) {
-        if (!loginService.checkIfExists(user.getUsername())) {
+        if (loginService.checkIfExists(user.getUsername()) == null) {
             System.out.println("用户不存在，请先注册");
             return Result.err(404, "用户不存在，请先注册");
         }
@@ -94,6 +94,4 @@ public class LoginController {
             return Result.err(Result.CODE_ERR_BUSINESS, "密码错误");
         }
     }
-
-
 }

@@ -45,12 +45,7 @@ public class BankDaoImpl implements BankDaoInterface {
     }
 
     @Override
-    public void updateMoney() throws IOException {
-
-    }
-
-    @Override
-    public boolean findByName(String username) throws IOException {
+    public boolean findByName(String username) {
         File userInfo = new File("./userInfo/" + username + ".properties");
         return userInfo.exists();
     }

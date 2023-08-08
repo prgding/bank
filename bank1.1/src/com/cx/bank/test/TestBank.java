@@ -21,6 +21,7 @@ public class TestBank {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
+            System.out.println("manager = " + manager);
             System.out.println("请输入操作编号：1.查询余额  2.取款  3.存款  4.退出系统");
             int operation = scanner.nextInt();
 

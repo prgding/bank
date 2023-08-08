@@ -17,9 +17,7 @@ public interface BankDaoInterface {
 
     void insertUser(String username,String password) throws IOException;
 
-    void updateMoney() throws IOException;
-
-    boolean findByName(String username) throws IOException;
+    boolean findByName(String username);
 
     boolean findUser(String username,String password) throws IOException;
 }

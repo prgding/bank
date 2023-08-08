@@ -1,10 +1,8 @@
 package cc.ding.bankweb.service;
 
 import cc.ding.bankweb.dao.AccountRepository;
-import cc.ding.bankweb.dao.LogRepository;
 import cc.ding.bankweb.model.Account;
 import cc.ding.bankweb.util.MD5Utils;
-import jakarta.persistence.EntityManager;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,13 +22,8 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     private AccountRepository accountRepository;
 
-    @Autowired
-    private LogRepository logRepository;
-    @Autowired
-    private EntityManager entityManager;
-
-    public boolean checkIfExists(String username) {
-        return accountRepository.findByUsername(username) != null;
+    public Account checkIfExists(String username) {
+        return accountRepository.findByUsername(username);
     }
 
     @Override
@@ -45,6 +38,4 @@ public class LoginServiceImpl implements LoginService {
         password = MD5Utils.hash(password);
         return accountRepository.findByUsernameAndPassword(username, password);
     }
-
-
 }

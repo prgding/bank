@@ -2,6 +2,7 @@ package cc.ding.bankweb.dao;
 
 import cc.ding.bankweb.model.Log;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -29,5 +30,10 @@ public interface LogRepository extends JpaRepository<Log, Integer> {
     @Query(value = "select a.username, l.* from account a, log l where a.id = l.user_id",
             nativeQuery = true)
     Page<Object[]> findAllLogWithUsername(Pageable pageable);
+
+    @Query(value = "select a.username, l.* from account a, log l where a.id = l.user_id and a.id = :userId",
+            nativeQuery = true)
+    Page<Object[]> findLogWithUsernameByUserId(PageRequest pageRequest, @Param("userId") int userId);
+
 
 }

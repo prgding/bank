@@ -13,6 +13,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -22,8 +23,13 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class TokenUtils {
 
-    private static final String CLAIM_NAME_USERID = "CLAIM_NAME_USERID";
+    private static final String CLAIM_NAME_ID = "CLAIM_NAME_ID";
+    private static final String CLAIM_NAME_BALANCE = "CLAIM_NAME_BALANCE";
+    private static final String CLAIM_NAME_PASSWORD = "CLAIM_NAME_PASSWORD";
+
     private static final String CLAIM_NAME_USERNAME = "CLAIM_NAME_USERNAME";
+    private static final String CLAIM_NAME_USERFLAG = "CLAIM_NAME_USERFLAG";
+    private static final String CLAIM_NAME_IMAGEURL = "CLAIM_NAME_IMAGEURL";
     //注入redis模板
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -32,7 +38,14 @@ public class TokenUtils {
     private int expireTime;
 
     private String sign(Account account) {
-        return JWT.create().withClaim(CLAIM_NAME_USERID, account.getId()).withClaim(CLAIM_NAME_USERNAME, account.getUsername()).withIssuedAt(new Date())//发行时间
+        return JWT.create()
+                .withClaim(CLAIM_NAME_ID, account.getId())
+                .withClaim(CLAIM_NAME_BALANCE, String.valueOf(account.getBalance()))
+                .withClaim(CLAIM_NAME_PASSWORD, account.getPassword())
+                .withClaim(CLAIM_NAME_USERNAME, account.getUsername())
+                .withClaim(CLAIM_NAME_USERFLAG, account.getUserFlag())
+                .withClaim(CLAIM_NAME_IMAGEURL, account.getImageUrl())
+                .withIssuedAt(new Date())//发行时间
                 .withExpiresAt(new Date(System.currentTimeMillis() + expireTime * 1000L))//有效时间
                 .sign(Algorithm.HMAC256(account.getPassword()));
     }
@@ -63,10 +76,17 @@ public class TokenUtils {
             throw new BusinessException("令牌格式错误，请登录！");
         }
         //从解码后的token中获取用户信息并封装到CurrentUser对象中返回
-        String userName = decodedJWT.getClaim(CLAIM_NAME_USERNAME).asString();//用户姓名
+        Integer id = decodedJWT.getClaim(CLAIM_NAME_ID).asInt();
+        BigDecimal balance = new BigDecimal(decodedJWT.getClaim(CLAIM_NAME_BALANCE).asString());
+        String password = decodedJWT.getClaim(CLAIM_NAME_PASSWORD).asString();
+        String userName = decodedJWT.getClaim(CLAIM_NAME_USERNAME).asString();
+        Integer userFlag = decodedJWT.getClaim(CLAIM_NAME_USERFLAG).asInt();
+        String imageUrl = decodedJWT.getClaim(CLAIM_NAME_IMAGEURL).asString();
+        System.out.println("imageUrl = " + imageUrl);
+
         if (StringUtils.isEmpty(userName)) {
             throw new BusinessException("令牌缺失用户信息，请登录！");
         }
-        return new Account(null, userName, null, null, null, null);
+        return new Account(id, userName, password, balance, userFlag, imageUrl);
     }
 }

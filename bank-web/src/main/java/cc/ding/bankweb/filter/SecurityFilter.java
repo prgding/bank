@@ -24,7 +24,8 @@ public class SecurityFilter implements Filter {
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
-        System.out.print(request.getServletPath() + ", " + request.getMethod() + ", ");
+        String path = request.getServletPath();
+        System.out.print(path + ", " + request.getMethod() + ", ");
 
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Headers", "*");
@@ -36,9 +37,11 @@ public class SecurityFilter implements Filter {
         allowList.add("/captcha-code");
         allowList.add("/captcha");
         allowList.add("/api/upload");
+        allowList.add("/img");
+        allowList.add("/favicon.ico");
 
         // Release these requests
-        if (allowList.contains(request.getServletPath())) {
+        if (allowList.contains(path)||path.contains("/img")) {
             System.out.println("White list release");
             filterChain.doFilter(req, res);
             return;
