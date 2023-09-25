@@ -100,6 +100,5 @@ public class TestBank {
                 default -> System.out.println("无效的操作编号，请重新输入！");
             }
         }
-
     }
 }

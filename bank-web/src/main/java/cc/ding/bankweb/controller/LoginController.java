@@ -85,7 +85,9 @@ public class LoginController {
             return Result.err(Result.CODE_ERR_BUSINESS, "验证码错误");
         }
         Account checkPwd = loginService.checkPwd(user.getUsername(), user.getPassword());
-        if (checkPwd != null) {
+        if (checkPwd.getUserFlag() == 0) {
+            return Result.err(Result.CODE_ERR_BUSINESS, "用户被冻结");
+        } else if (checkPwd != null) {
             System.out.println("登录成功");
             String token = tokenUtils.loginSign(checkPwd);
             return Result.ok("登录成功", token);

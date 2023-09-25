@@ -4,14 +4,19 @@ import cc.ding.bankweb.dao.AccountRepository;
 import cc.ding.bankweb.dao.LogRepository;
 import cc.ding.bankweb.exception.AccountOverDrawnException;
 import cc.ding.bankweb.exception.InvalidDepositException;
+import cc.ding.bankweb.exception.InvalidWithdrawException;
 import cc.ding.bankweb.model.Account;
 import cc.ding.bankweb.model.Log;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
+@CacheConfig(cacheNames = "cc.ding.bankweb.service.AccountServiceImpl")
 @Service
 public class AccountServiceImpl implements AccountService {
     @Autowired
@@ -26,21 +31,33 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.findByUsername(username).getBalance();
     }
 
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "cc.ding.bankweb.service.AdminServiceImpl", allEntries = true),
+            @CacheEvict(cacheNames = "cc.ding.bankweb.service.PageServiceImpl", allEntries = true)
+    })
     @Override
-    public String withdrawals(String username, BigDecimal amount) throws AccountOverDrawnException {
-        BigDecimal balance = inquiry(username);
-        if (balance.compareTo(amount) < 0) {
-            throw new AccountOverDrawnException("余额不足，无法取款");
+    public String withdrawals(String username, BigDecimal amount) throws AccountOverDrawnException, InvalidWithdrawException {
+        if (amount.signum() < 0) {
+            throw new InvalidWithdrawException("取款不能为负");
         } else {
-            balance = balance.subtract(amount);
-            accountRepository.updateBalance(username, balance);
-            Integer id = accountRepository.findByUsername(username).getId();
-            Log log = new Log(null, "取款", amount, id);
-            logRepository.save(log);
-            return "取款成功，余额：" + balance + "\n";
+            BigDecimal balance = inquiry(username);
+            if (balance.compareTo(amount) < 0) {
+                throw new AccountOverDrawnException("余额不足，无法取款");
+            } else {
+                balance = balance.subtract(amount);
+                accountRepository.updateBalance(username, balance);
+                Integer id = accountRepository.findByUsername(username).getId();
+                Log log = new Log(null, "取款", amount, id);
+                logRepository.save(log);
+                return "取款成功，余额：" + balance + "\n";
+            }
         }
     }
 
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "cc.ding.bankweb.service.AdminServiceImpl", allEntries = true),
+            @CacheEvict(cacheNames = "cc.ding.bankweb.service.PageServiceImpl", allEntries = true)
+    })
     @Override
     public String deposit(String username, BigDecimal amount) throws InvalidDepositException {
         if (amount.signum() < 0) {
@@ -55,6 +72,10 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "cc.ding.bankweb.service.AdminServiceImpl", allEntries = true),
+            @CacheEvict(cacheNames = "cc.ding.bankweb.service.PageServiceImpl", allEntries = true)
+    })
     @Override
     public String transfer(String fromName, String toName, BigDecimal transMoney) throws AccountOverDrawnException {
         Account act = accountRepository.findByUsername(toName);

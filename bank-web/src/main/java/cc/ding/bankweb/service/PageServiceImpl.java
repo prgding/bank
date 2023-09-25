@@ -4,10 +4,12 @@ import cc.ding.bankweb.dao.AccountRepository;
 import cc.ding.bankweb.dao.LogRepository;
 import cc.ding.bankweb.model.Account;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
+@CacheConfig(cacheNames = "cc.ding.bankweb.service.PageServiceImpl")
 @Service
 public class PageServiceImpl implements PageService {
     @Autowired
@@ -26,12 +28,14 @@ public class PageServiceImpl implements PageService {
         return logRepository.findAll().size();
     }
 
+    @Cacheable(key = "'users:page:' + #page + ':size:' + #size")
     @Override
     public Page<Account> findUsers(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
         return accountRepository.findAll(pageRequest);
     }
 
+    @Cacheable(key = "'logs:page:' + #page + ':size:' + #size")
     @Override
     public Page<Object[]> findLogs(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page - 1, size);

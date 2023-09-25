@@ -26,7 +26,6 @@ public class TokenUtils {
     private static final String CLAIM_NAME_ID = "CLAIM_NAME_ID";
     private static final String CLAIM_NAME_BALANCE = "CLAIM_NAME_BALANCE";
     private static final String CLAIM_NAME_PASSWORD = "CLAIM_NAME_PASSWORD";
-
     private static final String CLAIM_NAME_USERNAME = "CLAIM_NAME_USERNAME";
     private static final String CLAIM_NAME_USERFLAG = "CLAIM_NAME_USERFLAG";
     private static final String CLAIM_NAME_IMAGEURL = "CLAIM_NAME_IMAGEURL";

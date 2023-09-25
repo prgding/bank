@@ -34,6 +34,4 @@ public interface LogRepository extends JpaRepository<Log, Integer> {
     @Query(value = "select a.username, l.* from account a, log l where a.id = l.user_id and a.id = :userId",
             nativeQuery = true)
     Page<Object[]> findLogWithUsernameByUserId(PageRequest pageRequest, @Param("userId") int userId);
-
-
 }
